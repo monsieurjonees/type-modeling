@@ -67,14 +67,12 @@ public class PythonObject {
      * @throws PythonAttributeException When there is no attribute on this object with that name.
      */
     public final PythonObject get(String attrName) throws PythonAttributeException {
-        PythonObject attr = attrs.get(attrName);
-        if (!attrs.containsKey(attrName)) {
-            if (type != null) {
-                return type.get(attrName);
+        for (PythonObject obj : getMRO()) {
+            if (obj.attrs.containsKey(attrName)) {
+                return obj.attrs.get(attrName);
             }
-            throw new PythonAttributeException(this, attrName);
         }
-        return attr;
+        throw new PythonAttributeException(this, attrName);
     }
 
     /**
