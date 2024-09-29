@@ -68,12 +68,13 @@ public class PythonObject {
      */
     public final PythonObject get(String attrName) throws PythonAttributeException {
         PythonObject attr = attrs.get(attrName);
-        if (attr == null && type != null) {
+        if (!attrs.containsKey(attrName) && type != null) {
             try {
                 attr = type.get(attrName);
-            } catch (Exception e) {}
-        }
-        if (attr == null) {
+            } catch (Exception e) {
+                throw new PythonAttributeException(this, attrName);
+            }
+        } else if (!attrs.containsKey(attrName)) {
             throw new PythonAttributeException(this, attrName);
         }
         return attr;

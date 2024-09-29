@@ -48,7 +48,7 @@ public class PythonType extends PythonObject {
         }
         return mro;
     }
-
+    
     /**
      * Creates and returns a new instance of this class, i.e. a PythonObject whose type is
      * this PythonType.

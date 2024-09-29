@@ -21,7 +21,7 @@ class PythonObjectTest {
      *   class Foo:
      *     pass
      *
-     *   class Bar:
+     *   class Bar(Foo):
      *     pass
      *
      *   foo = Foo()
