@@ -84,6 +84,7 @@ class JavaAssignment(JavaExpression):
     def check_types(self):
         if not self.rhs.static_type().is_subtype_of(self.static_type()):
             raise JavaTypeMismatchError(f"Cannot assign {self.rhs.static_type().name} to variable {self.lhs.name} of type {self.lhs.declared_type.name}")
+        self.rhs.check_types()
 
 
 class JavaMethodCall(JavaExpression):
@@ -109,6 +110,16 @@ class JavaMethodCall(JavaExpression):
     
     def static_type(self):
         return self.receiver.static_type().method_named(self.method_name).return_type
+
+    def check_types(self):
+        self.receiver.check_types()
+        method = self.receiver.static_type().method_named(self.method_name)
+        if len(self.args) != len(method.parameter_types):
+            raise JavaArgumentCountError(f"Wrong number of arguments for {self.receiver.declared_type.name}.{method.name}(): expected {len(method.parameter_types)}, got {len(self.args)}")
+        for i in range(len(self.args)):
+            self.args[i].check_types()
+            if not self.args[i].static_type().is_subtype_of(method.parameter_types[i]):
+                raise JavaTypeMismatchError(f"{self.receiver.declared_type.name}.{method.name}() expects arguments of type ({', '.join([t.name for t in method.parameter_types])}), but got ({', '.join([t.static_type().name for t in self.args])})")
 
 
 class JavaConstructorCall(JavaExpression):
